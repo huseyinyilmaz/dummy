@@ -1,9 +1,35 @@
-# send users
+# get users
 GET http://127.0.0.1:3334/users
 
-# send print
+# Working print
 
 GET http://127.0.0.1:3334/print
 Content-Type: text/plain; charset=utf-8
 
-adfasdf
+Test 1
+
+# RESPONSE
+#
+# Test 1
+
+# // GET http://127.0.0.1:3334/print
+# // HTTP/1.1 200 OK
+# // Transfer-Encoding: chunked
+# // Date: Sun, 26 Jun 2016 07:58:24 GMT
+# // Server: Warp/3.2.6
+# // Content-Type: text/plain;charset=utf-8
+# // Request duration: 0.030236s
+
+
+GET http://127.0.0.1:3334/print
+
+Test 2
+
+# RESPONSE
+#
+# // GET http://127.0.0.1:3334/print
+# // HTTP/1.1 415 Unsupported Media Type
+# // Transfer-Encoding: chunked
+# // Date: Sun, 26 Jun 2016 07:58:41 GMT
+# // Server: Warp/3.2.6
+# // Request duration: 0.021820s
