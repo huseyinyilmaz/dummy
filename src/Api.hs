@@ -16,6 +16,8 @@ import Data.String(String)
 import Data.Aeson
 import Data.Aeson.TH
 
+import Data.ByteString.Lazy(ByteString)
+
 -- Servant
 --import Data.Text
 import Servant
@@ -29,5 +31,5 @@ data User = User
 $(deriveJSON defaultOptions ''User)
 
 type UsersAPI = "users" :> Get '[JSON] [User]
-type PrintAPI = "print" :> ReqBody '[PlainText] String :> Get '[PlainText] String
+type PrintAPI = "print" :> ReqBody '[OctetStream] ByteString :> Get '[PlainText] String
 type API = UsersAPI :<|> PrintAPI

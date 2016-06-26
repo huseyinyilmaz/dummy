@@ -23,6 +23,7 @@ library
                      , wai
                      , warp
                      , transformers
+                     , bytestring
   default-language:    Haskell2010
   extensions:          NoImplicitPrelude
                      , OverloadedStrings
@@ -37,6 +38,7 @@ executable dummy
   build-depends:       base
                      , transformers
                      , dummy
+                     , bytestring
   default-language:    Haskell2010
   extensions:          NoImplicitPrelude
                      , OverloadedStrings

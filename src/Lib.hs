@@ -7,7 +7,7 @@ import Data.Int(Int)
 import Data.Eq(Eq)
 import Text.Show(Show)
 import System.IO(IO)
-import System.IO(putStrLn)
+--import System.IO(putStrLn)
 import Control.Monad(return)
 import Data.Function
 
@@ -15,7 +15,8 @@ import Control.Monad.IO.Class
 -- import Control.Monad.Trans(liftIO)
 
 import Data.String(String)
-
+import Data.ByteString.Lazy.Char8(putStrLn)
+import Data.ByteString.Lazy.Char8(unpack)
 import Data.Aeson
 import Data.Aeson.TH
 import Network.Wai
@@ -50,4 +51,4 @@ users = [ User 1 "Isaac" "Newton"
 
 print body = do
   liftIO $ putStrLn body
-  return body
+  return $ unpack body
