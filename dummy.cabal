@@ -24,6 +24,7 @@ library
                      , warp
                      , transformers
                      , bytestring
+                     , http-types
   default-language:    Haskell2010
   extensions:          NoImplicitPrelude
                      , OverloadedStrings
@@ -39,6 +40,7 @@ executable dummy
                      , transformers
                      , dummy
                      , bytestring
+                     , http-types
   default-language:    Haskell2010
   extensions:          NoImplicitPrelude
                      , OverloadedStrings

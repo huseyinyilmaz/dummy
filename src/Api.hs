@@ -1,6 +1,7 @@
 {-# LANGUAGE DataKinds #-}
 {-# LANGUAGE TypeOperators #-}
 {-# LANGUAGE TemplateHaskell #-}
+{-# LANGUAGE OverloadedStrings #-}
 
 module Api where
 
@@ -11,6 +12,7 @@ import Text.Show(Show)
 import System.IO(IO)
 import Control.Monad(return)
 import Data.String(String)
+import Data.Function
 
 -- Aeson
 import Data.Aeson
@@ -22,6 +24,7 @@ import Data.ByteString.Lazy(ByteString)
 --import Data.Text
 import Servant
 
+
 data User = User
   { userId        :: Int
   , userFirstName :: String
@@ -31,5 +34,5 @@ data User = User
 $(deriveJSON defaultOptions ''User)
 
 type UsersAPI = "users" :> Get '[JSON] [User]
-type PrintAPI = "print" :> ReqBody '[OctetStream] ByteString :> Get '[PlainText] String
+type PrintAPI = "print" :> Raw
 type API = UsersAPI :<|> PrintAPI
