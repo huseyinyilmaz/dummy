@@ -1,0 +1,10 @@
+# send users
+GET http://127.0.0.1:8080/users
+
+# send print
+
+GET http://127.0.0.1:8080/print
+Content-Type: text/plain;charset=utf-8
+
+
+Test Test
