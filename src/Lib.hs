@@ -16,10 +16,9 @@ import Control.Monad.IO.Class
 import Data.Functor(fmap)
 -- import Control.Monad.Trans(liftIO)
 import Data.String(String)
-import Data.ByteString.Lazy.Char8(putStrLn)
-import Data.ByteString.Lazy.Char8(unpack)
-import Data.ByteString.Lazy.Char8(concat)
+import qualified Data.String as String
 import qualified Data.ByteString.Lazy.Char8 as Char8
+import qualified Data.ByteString.Char8 as C8
 import Data.ByteString.Lazy(fromStrict)
 import Data.Aeson
 import Data.Aeson.TH
@@ -50,22 +49,20 @@ api :: Proxy API
 api = Proxy
 
 server :: Server API
-server = return users
-  :<|> printRaw
+--server = (return users) :<|> echo :<|> handleCommand
+server = (return users) :<|> handleCommand
 
+-- users
 users :: [User]
 users = [ User 1 "Isaac" "Newton"
         , User 2 "Albert" "Einstein"
         ]
 
-print body = do
-  liftIO $ putStrLn body
-  return $ unpack body
-
+-- ECHO
 printHeaders hs =
   unlines $ fmap (\(h,v)-> (show h) ++ "->"++ (show v) ++ "\n") hs
 
-printRaw request respond = do
+echo request respond = do
   body <- requestBody request >>= return.fromStrict
   let method = requestMethod request
   let rawHeaders = requestHeaders request
@@ -76,5 +73,9 @@ printRaw request respond = do
                               ])
 
   let response = responseLBS status200 [("Content-Type", "text/plain")] bodyStr
-  putStrLn bodyStr
+  Char8.putStrLn bodyStr
   respond response
+
+-- handle Command
+handleCommand :: Message -> Handler String
+handleCommand m = return $ show m
