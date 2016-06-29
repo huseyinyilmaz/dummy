@@ -18,6 +18,7 @@ import Data.Text
 import Data.Aeson
 import Data.Aeson.TH
 
+import GHC.Generics
 -- Servant
 --import Data.Text
 import Servant
@@ -60,6 +61,18 @@ instance FromFormUrlEncoded Message where
                  Nothing -> Left $ "label " <> (unpack input_label) <> " not found"
                  Just v    -> Right v
 
+data ResponseType = InChannel|Ephemeral deriving (Show, Generic)
+data Response = Response {
+  response_type :: ResponseType,
+  text :: String
+} deriving (Show, Generic)
+
+
+instance FromJSON ResponseType
+instance ToJSON ResponseType
+
+instance FromJSON Response
+instance ToJSON Response
 
 type UsersAPI = "users" :> Get '[JSON] [User]
 type PrintAPI = "echo" :> ReqBody '[PlainText] String :> Get '[PlainText] String

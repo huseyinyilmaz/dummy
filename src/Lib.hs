@@ -17,15 +17,16 @@ import Data.Functor(fmap)
 -- import Control.Monad.Trans(liftIO)
 import Data.String(String)
 import qualified Data.String as String
-import qualified Data.ByteString.Lazy.Char8 as Char8
+import qualified Data.ByteString.Lazy.Char8 as LC8
 import qualified Data.ByteString.Char8 as C8
+import qualified Data.Text as Text
 import Data.ByteString.Lazy(fromStrict)
 import Data.Aeson
 import Data.Aeson.TH
 import Network.Wai
 import Network.Wai.Handler.Warp
 import Servant
-
+import Network.HTTP hiding(Response)
 import Api
 
 -- $(deriveJSON defaultOptions ''User)
@@ -66,16 +67,23 @@ echo request respond = do
   body <- requestBody request >>= return.fromStrict
   let method = requestMethod request
   let rawHeaders = requestHeaders request
-  let bodyStr = (Char8.concat ["Method:\n\n", (Char8.pack . show) method, "\n",
-                               "Headers:\n\n", (Char8.pack . printHeaders) rawHeaders, "\n",
-                               "Body:\n\n", body, "\n",
-                               "-------------------------------"
-                              ])
+  let bodyStr = (LC8.concat ["Method:\n\n", (LC8.pack . show) method, "\n",
+                              "Headers:\n\n", (LC8.pack . printHeaders) rawHeaders, "\n",
+                              "Body:\n\n", body, "\n",
+                              "-------------------------------"
+                            ])
 
   let response = responseLBS status200 [("Content-Type", "text/plain")] bodyStr
-  Char8.putStrLn bodyStr
+  LC8.putStrLn bodyStr
+
   respond response
 
 -- handle Command
 handleCommand :: Message -> Handler String
-handleCommand m = return $ show m
+handleCommand m =
+  do
+    let response = Response Ephemeral (show m)
+    resp <- liftIO $ simpleHTTP(postRequestWithBody (Text.unpack $ response_url m)
+                                 "application/json"
+                                 (LC8.unpack $ encode response))
+    liftIO $ getResponseBody resp
