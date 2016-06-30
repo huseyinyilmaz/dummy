@@ -14,6 +14,7 @@ import Data.Function
 import Data.List
 import Control.Monad.IO.Class
 import Data.Functor(fmap)
+import Data.Maybe(fromJust)
 -- import Control.Monad.Trans(liftIO)
 import Data.String(String)
 import qualified Data.String as String
@@ -26,7 +27,7 @@ import Data.Aeson.TH
 import Network.Wai
 import Network.Wai.Handler.Warp
 import Servant
-import Network.HTTP hiding(Response)
+-- import Network.HTTP hiding(Response)
 import Api
 
 -- $(deriveJSON defaultOptions ''User)
@@ -35,6 +36,10 @@ import Network.Wai
 import Network.HTTP.Types (status200)
 import Network.Wai.Handler.Warp (run)
 
+import Network.HTTP hiding (Response,
+                            getResponseBody)
+import Network.HTTP.Simple hiding(Proxy)
+import Network.URI
 
 
 startApp :: IO ()
@@ -78,12 +83,17 @@ echo request respond = do
 
   respond response
 
+
 -- handle Command
 handleCommand :: Message -> Handler String
 handleCommand m =
   do
+
     let response = Response Ephemeral (show m)
-    resp <- liftIO $ simpleHTTP(postRequestWithBody (Text.unpack $ response_url m)
-                                 "application/json"
-                                 (LC8.unpack $ encode response))
-    liftIO $ getResponseBody resp
+    request <- httpLBS $ setRequestBodyJSON response $ "POST https://httpbin.org/post"
+
+    --httpResponse <- httpJSON request
+    return $ LC8.unpack $ getResponseBody request
+    -- resp <- liftIO $ simpleHTTP(postRequestWithBody (Text.unpack $ response_url m)
+    --                              "application/json"
+    --                              (LC8.unpack $ encode response))
