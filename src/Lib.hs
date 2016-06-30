@@ -36,8 +36,8 @@ import Network.Wai
 import Network.HTTP.Types (status200)
 import Network.Wai.Handler.Warp (run)
 
-import Network.HTTP hiding (Response,
-                            getResponseBody)
+-- import Network.HTTP hiding (Response,
+--                             getResponseBody)
 import Network.HTTP.Simple hiding(Proxy)
 import Network.URI
 
@@ -77,7 +77,6 @@ echo request respond = do
                               "Body:\n\n", body, "\n",
                               "-------------------------------"
                             ])
-
   let response = responseLBS status200 [("Content-Type", "text/plain")] bodyStr
   LC8.putStrLn bodyStr
 
@@ -90,11 +89,15 @@ handleCommand m =
   do
     (liftIO . putStrLn . show) m
     let response = Response Ephemeral (show m)
-    req <- parseRequest $ Text.unpack $ ("POST " <> (response_url m))
-    let req' = setRequestBodyJSON response req
+    mainReq <- parseRequest $ Text.unpack (response_url m)
+    let req= setRequestBodyJSON response
+             $ setRequestMethod "POST"
+             $ mainReq
+
+    resp <- httpLBS req
     (liftIO . putStrLn . show) m
-    (liftIO . putStrLn . show) req'
-    resp <- httpLBS $ req'
+    (liftIO . putStrLn . show) req
+    (liftIO . putStrLn . show) resp
     --httpResponse <- httpJSON request
     return $ LC8.unpack $ getResponseBody resp
     -- resp <- liftIO $ simpleHTTP(postRequestWithBody (Text.unpack $ response_url m)
