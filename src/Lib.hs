@@ -5,10 +5,10 @@ module Lib
 -- Prelude imports
 import Data.Int(Int)
 import Data.Eq(Eq)
--- import Text.Show(Show)
+import Data.Monoid((<>))
 import Text.Show(show)
 import System.IO(IO)
---import System.IO(putStrLn)
+import System.IO(putStrLn)
 import Control.Monad
 import Data.Function
 import Data.List
@@ -88,9 +88,9 @@ echo request respond = do
 handleCommand :: Message -> Handler String
 handleCommand m =
   do
-
+    (liftIO . putStrLn . show) m
     let response = Response Ephemeral (show m)
-    req <- parseRequest $ Text.unpack $ response_url m
+    req <- parseRequest $ Text.unpack $ ("POST " <> (response_url m))
     resp <- httpLBS $ setRequestBodyJSON response req
     --httpResponse <- httpJSON request
     return $ LC8.unpack $ getResponseBody resp
