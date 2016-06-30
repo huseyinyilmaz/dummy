@@ -91,7 +91,10 @@ handleCommand m =
     (liftIO . putStrLn . show) m
     let response = Response Ephemeral (show m)
     req <- parseRequest $ Text.unpack $ ("POST " <> (response_url m))
-    resp <- httpLBS $ setRequestBodyJSON response req
+    let req' = setRequestBodyJSON response req
+    (liftIO . putStrLn . show) m
+    (liftIO . putStrLn . show) req'
+    resp <- httpLBS $ req'
     --httpResponse <- httpJSON request
     return $ LC8.unpack $ getResponseBody resp
     -- resp <- liftIO $ simpleHTTP(postRequestWithBody (Text.unpack $ response_url m)
